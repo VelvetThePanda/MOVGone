@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOVGone.API", "MOVGone.API\MOVGone.API.csproj", "{550085E8-E6C3-44C0-9AF3-0A010AFDA439}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOVGone.Bot", "MOVGone.Bot\MOVGone.Bot.csproj", "{1D9B1572-2EAA-4547-869B-50FB59BE68DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{550085E8-E6C3-44C0-9AF3-0A010AFDA439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{550085E8-E6C3-44C0-9AF3-0A010AFDA439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{550085E8-E6C3-44C0-9AF3-0A010AFDA439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{550085E8-E6C3-44C0-9AF3-0A010AFDA439}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D9B1572-2EAA-4547-869B-50FB59BE68DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D9B1572-2EAA-4547-869B-50FB59BE68DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D9B1572-2EAA-4547-869B-50FB59BE68DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D9B1572-2EAA-4547-869B-50FB59BE68DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

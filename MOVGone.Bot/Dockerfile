@@ -3,16 +3,15 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["NoMOV.Bot/NoMOV.Bot.csproj", "NoMOV.Bot/"]
-RUN dotnet restore "NoMOV.Bot/NoMOV.Bot.csproj"
 COPY . .
-WORKDIR "/src/NoMOV.Bot"
-RUN dotnet build "NoMOV.Bot.csproj" -c Release -o /app/build
+#COPY ["MOVGone.Bot/MOVGone.Bot.csproj", "MOVGone.Bot/"]
+RUN dotnet restore "MOVGone.Bot.csproj"
+#RUN dotnet build "MOVGone.Bot.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NoMOV.Bot.csproj" -c Release -o /app/publish
+RUN dotnet publish "MOVGone.Bot.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NoMOV.Bot.dll"]
+ENTRYPOINT ["dotnet", "MOVGone.Bot.dll"]

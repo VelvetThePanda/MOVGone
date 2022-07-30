@@ -19,8 +19,10 @@ public class VideoResponder : IResponder<IMessageCreate>
     private readonly IDiscordRestGuildAPI _guilds;
     private readonly IDiscordRestChannelAPI _channels;
     
-    public VideoResponder(IHttpClientFactory clientFactory)
+    public VideoResponder(IHttpClientFactory clientFactory, IDiscordRestGuildAPI guilds, IDiscordRestChannelAPI channels)
     {
+        _guilds = guilds;
+        _channels = channels;
         _api = clientFactory.CreateClient("ApiClient");
         _http = clientFactory.CreateClient();
     }

@@ -9,18 +9,22 @@ namespace NoMOV.API;
 public class VideoController : Controller
 {
     private readonly IHttpClientFactory _http;
+    private readonly ProcessStartInfo _ffmpeg;
+    
     public VideoController(IHttpClientFactory http)
     {
         _http = http;
+        
+        _ffmpeg = new("./ffmpeg", "-hide_banner -level quiet -i - -c:v libx264 -crf 27 -preset veryslow -c:a aac -b:a 30k -f mp4 -")
+        {
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
     }
-    
-    private readonly ProcessStartInfo _ffmpeg = new("./ffmpeg", "-hide_banner -level quiet -i - -c:v libx264 -crf 27 -preset veryslow -c:a aac -b:a 30k -f mp4 -")
-    {
-        RedirectStandardError = true,
-        RedirectStandardOutput = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
-    };
+
+
 
     public record Videos(IEnumerable<string> Attachments, int UploadLimit);
     

@@ -9,22 +9,13 @@ namespace NoMOV.API;
 public class VideoController : Controller
 {
     private readonly IHttpClientFactory _http;
-    private readonly ProcessStartInfo _ffmpeg;
     
-    public VideoController(IHttpClientFactory http)
-    {
-        _http = http;
-        
-        _ffmpeg = new("./ffmpeg", "-hide_banner -level quiet -i - -c:v libx264 -crf 27 -preset veryslow -c:a aac -b:a 30k -f mp4 -")
-        {
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-    }
-
-
+    private readonly string _tempPath = 
+        OperatingSystem.IsLinux() 
+        ? "/tmp"
+        : Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create), "MOVGone");
+    
+    public VideoController(IHttpClientFactory http) => _http = http;
 
     public record Videos(IEnumerable<string> Attachments, int UploadLimit);
     
@@ -54,27 +45,47 @@ public class VideoController : Controller
             totalUpload += (int) (url.EndsWith(".mov") ? contentLength - contentLength / 10 : contentLength);
         }
         
-        
         return totalUpload <= data.UploadLimit ? Ok() : new StatusCodeResult((int)HttpStatusCode.RequestEntityTooLarge);
     }
 
     [HttpPost("transcode")]
     public async Task<IActionResult> Transcode([FromBody] string url)
     {
-        var client = _http.CreateClient();
-
-        var content = await client.GetStreamAsync(url);
+        if (OperatingSystem.IsWindows())
+            Directory.CreateDirectory(_tempPath);
         
-        var ffmpeg = Process.Start(_ffmpeg);
-
-        await content.CopyToAsync(ffmpeg.StandardInput.BaseStream);
+        var id = Guid.NewGuid().ToString();
+        var path = $"{_tempPath}/{id}.mp4";
         
+        using var client = _http.CreateClient();
+        using var content = await client.GetStreamAsync(url);
+        using var fs = new FileStream(path, FileMode.Create);
+
+        await content.CopyToAsync(fs);
+        await fs.FlushAsync();
+
+        using var ffmpeg = StartFFMpeg(path);
+
         var ms = new MemoryStream();
-        
         await ffmpeg.StandardOutput.BaseStream.CopyToAsync(ms);
-        
-        ffmpeg.Kill();
+
+        ms.Seek(0, SeekOrigin.Begin);
+
+        await ffmpeg.WaitForExitAsync();
         
         return File(ms, "video/mp4");
+    }
+
+    private Process StartFFMpeg(string path)
+    {
+        var ffmpeg = Process.Start(new ProcessStartInfo("./ffmpeg", 
+            $"-hide_banner -v quiet -f mov -i {path} " +
+            $"-c:v libx264 -crf 27 -f mp4 -movflags +frag_keyframe+empty_moov+faststart " +
+            $" pipe:1")
+        {
+            RedirectStandardOutput = true
+        });
+        
+        return ffmpeg;
     }
 }

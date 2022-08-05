@@ -55,7 +55,7 @@ public class VideoResponder : IResponder<IMessageCreate>
         
         await foreach (var result in GetTranscodedStreamsAsync(attachments, ct))
         {
-            outbound.Add(new FileData(attachments[counter].Split('/')[^1], result, string.Empty));
+            outbound.Add(new FileData(attachments[counter].Split('/')[^1].Replace("mov", "mp4"), result, string.Empty));
             counter++;
         }
 
